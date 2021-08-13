@@ -56,19 +56,20 @@ public class CaptchaFilter extends OncePerRequestFilter {
         //post方法不能直接getParameter
 
         //把读取出来的json字符串参数再用fastjson转成map获取参数
-        BufferedReader br = request.getReader();
-        String str = "";
-        String paramString = "";
-        while ((str = br.readLine()) != null) {
-            paramString += str;
-        }
-
-        HashMap<String,String> paramMap = JSON.parseObject(paramString, HashMap.class);
-
-
-        String key = paramMap.get("key");
-        String captchaCode = paramMap.get("captchaCode");
-
+        // BufferedReader br = request.getReader();
+        // String str = "";
+        // String paramString = "";
+        // while ((str = br.readLine()) != null) {
+        //     paramString += str;
+        // }
+        //
+        // HashMap<String,String> paramMap = JSON.parseObject(paramString, HashMap.class);
+        //
+        //
+        // String key = paramMap.get("key");
+        // String captchaCode = paramMap.get("captchaCode");
+        String key = request.getParameter("key");
+        String captchaCode = request.getParameter("captchaCode");
         //2.1先校验key和验证码是否为空
         //可能出现验证码还没刷出来的时候就发出登录请求
         if (StringUtils.isBlank(key) || StringUtils.isBlank(captchaCode)) {

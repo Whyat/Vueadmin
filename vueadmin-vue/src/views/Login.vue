@@ -32,12 +32,13 @@
 
 <script>
 import request from "@/util/request.js";
+import qs from 'qs';
 
 export default {
   name: "Login",
   data() {
     return {
-      loginButtonDisabled:true,
+      loginButtonDisabled: true,
       loginForm: {
         username: '',
         password: '',
@@ -62,16 +63,16 @@ export default {
   },
   methods: {
     submitForm(formName) {
-      this.loginButtonDisabled = true;
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          request.post('/login', this.loginForm).then(res => {
+          this.loginButtonDisabled = true;
+          request.post('/login?' + qs.stringify(this.loginForm)).then(res => {
             if (res.data.code === 2000) {
               //请求成功取得jwt
               const jwt = res.headers['authorization'];
               this.$store.commit('SET_TOKEN', jwt);
               this.$router.push('/index');
-            }else{
+            } else {
               //登陆失败，再次获取验证码
               this.getCaptcha()
             }

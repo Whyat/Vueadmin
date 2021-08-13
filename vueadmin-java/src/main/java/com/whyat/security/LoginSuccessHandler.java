@@ -14,18 +14,10 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
 @Component
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
-    public void onAuthenticationFailure(HttpServletRequest req, HttpServletResponse resp, AuthenticationException e) throws IOException, ServletException {
-        resp.setContentType("application/json;charset=utf-8");
-        ServletOutputStream outputStream = resp.getOutputStream();
-        Result result = Result.fail(e.getMessage());
-        String jsonStr = JSONUtil.toJsonStr(result);
-        outputStream.print(jsonStr);
-        outputStream.flush();
-        outputStream.close();
-    }
-
     /**
      * 生成jwt放置到响应头中
      * @param req
@@ -43,7 +35,9 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         Result result = Result.success("认证登录成功处理器返回的消息");
         String jsonStr = JSONUtil.toJsonStr(result);
-        outputStream.print(jsonStr);
+        byte[] bytes = jsonStr.getBytes(StandardCharsets.UTF_8);
+        // outputStream.print(jsonStr);[
+        outputStream.write(bytes);
         outputStream.flush();
         outputStream.close();
     }
