@@ -1,0 +1,25 @@
+server:
+  port: 8081
+spring:
+  # 数据源
+  datasource:
+    username: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://www.whyat.top:3307/vueadmin?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    password: 81654660
+  # security
+  security:
+    user:
+      name: whyat
+      password: 123456
+  #redis
+  redis:
+    host: www.whyat.top
+    port: 6380
+  #热部署
+  devtools:
+    remote:
+      restart:
+        enabled: true
+mybatis-plus:
+ mapper-locations: classpath*:/mapper/**Mapper.xml
