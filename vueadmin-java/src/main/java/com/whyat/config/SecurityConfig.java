@@ -1,7 +1,11 @@
 package com.whyat.config;
 
 import com.whyat.security.CaptchaFilter;
+import com.whyat.security.JwtAccessDeniedHandler;
+import com.whyat.security.JwtAuthenticationEntryPoint;
+import com.whyat.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,9 +28,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthenticationFailureHandler authenticationFailureHandler;
 
+    //
+    @Autowired
+    JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    @Autowired
+    JwtAccessDeniedHandler jwtAccessDeniedHandler;
+
     //自定义验证码过滤器
     @Autowired
     private CaptchaFilter captchaFilter;
+
+    @Bean
+    JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+        return new JwtAuthenticationFilter(authenticationManager());
+    }
 
     //访问URL白名单
     private static final String[] URL_WHITELIST = {
@@ -56,8 +71,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(URL_WHITELIST).permitAll()
                 .anyRequest().authenticated()
 
-                //在用户名密码验证过滤器之前验证
-                .and().addFilterBefore(captchaFilter, UsernamePasswordAuthenticationFilter.class)
+                //异常处理器
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler)
+
+
+                .and()
+                //验证token
+                .addFilter(jwtAuthenticationFilter())
+                //在用户名密码验证过滤器之前验证验证码
+                .addFilterBefore(captchaFilter, UsernamePasswordAuthenticationFilter.class)
         ;
     }
 }

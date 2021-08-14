@@ -70,6 +70,7 @@ export default {
             if (res.data.code === 2000) {
               //请求成功取得jwt
               const jwt = res.headers['authorization'];
+              console.log(jwt);
               this.$store.commit('SET_TOKEN', jwt);
               this.$router.push('/index');
             } else {
@@ -92,7 +93,6 @@ export default {
     getCaptcha() {
       request.get('/captcha').then((res) => {
         let data = res.data.data;
-        console.log(data);
         this.captchaImg = data.captchaImg;
         this.loginForm.key = data.key;
         this.loginForm.captchaCode = '';

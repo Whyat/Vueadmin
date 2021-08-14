@@ -68,6 +68,7 @@ public class CaptchaFilter extends OncePerRequestFilter {
         //
         // String key = paramMap.get("key");
         // String captchaCode = paramMap.get("captchaCode");
+
         String key = request.getParameter("key");
         String captchaCode = request.getParameter("captchaCode");
         //2.1先校验key和验证码是否为空

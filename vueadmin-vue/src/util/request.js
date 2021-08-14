@@ -31,7 +31,6 @@ request.interceptors.response.use(
         if (resp.code === 2000) {
             return response;
         } else {
-            console.log(resp)
             el.Message.error(resp.msg ? resp.data : '系统异常');
             return response;
         }

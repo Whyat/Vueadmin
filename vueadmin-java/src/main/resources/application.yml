@@ -10,7 +10,7 @@ spring:
   # security
   security:
     user:
-      name: user
+      name: whyat
       password: 123
   #redis
   redis:
@@ -21,5 +21,10 @@ spring:
     remote:
       restart:
         enabled: true
+whyat:
+  jwt:
+    tokenName: Authorization
+    expire: 604800 #过期时间：7天，单位秒
+    secret: sadu5sadfgfazxcfasd51zxcasad15ad #随机32位字符串密钥
 mybatis-plus:
  mapper-locations: classpath*:/mapper/**Mapper.xml

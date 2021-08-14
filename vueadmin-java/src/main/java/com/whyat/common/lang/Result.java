@@ -23,7 +23,7 @@ public class Result implements Serializable {
     }
 
     public static Result success(int code, String msg, Object data) {
-        return new Result(code, msg, 200);
+        return new Result(code, msg, data);
     }
 
     public static Result fail(Object data) {
