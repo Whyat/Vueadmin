@@ -5,4 +5,5 @@ package com.whyat.common.lang;
  */
 public class Const {
     public static final String CAPTCHA = "captcha";
+    public static final String GRANTED_AUTHORITY = "GrantedAuthority";
 }

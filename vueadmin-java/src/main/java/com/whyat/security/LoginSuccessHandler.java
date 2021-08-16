@@ -2,6 +2,7 @@ package com.whyat.security;
 
 import cn.hutool.json.JSONUtil;
 import com.whyat.common.lang.Result;
+import com.whyat.entity.SysUser;
 import com.whyat.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +30,12 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
      * @throws ServletException
      */
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse resp, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse resp, Authentication authentication) throws IOException {
         resp.setContentType("application/json;charset=utf-8");
         ServletOutputStream outputStream = resp.getOutputStream();
-
+        CustomUser customUser = (CustomUser) authentication.getPrincipal();
         //生成主体为用户名的'Authoriaztion'的headervalue=token参数，放到响应头header，
-        String token = jwtUtils.generateToken(authentication.getName());
+        String token = jwtUtils.generateToken(customUser);
         log.info("authentication参数是：" + authentication);
         resp.setHeader(jwtUtils.getTokenName(), token);
 
@@ -44,7 +45,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         String jsonStr = JSONUtil.toJsonStr(result);
         byte[] bytes = jsonStr.getBytes(StandardCharsets.UTF_8);
 
-        // outputStream.print(jsonStr);[
         outputStream.write(bytes);
         outputStream.flush();
         outputStream.close();

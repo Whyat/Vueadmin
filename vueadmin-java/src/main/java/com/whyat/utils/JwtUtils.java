@@ -1,5 +1,9 @@
 package com.whyat.utils;
 
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
+import com.whyat.entity.SysUser;
+import com.whyat.security.CustomUser;
 import io.jsonwebtoken.*;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -17,14 +21,19 @@ public class JwtUtils {
 	private String tokenName;
 
 	// 生成jwt
-	public String generateToken(String username) {
+	public String generateToken(CustomUser customUser) {
 
 		Date nowDate = new Date();
 		Date expireDate = new Date(nowDate.getTime() + 1000 * expire);
+		//token主体信息存入用户的用户名和用户id
+		SysUser user = new SysUser();
+		user.setUsername(customUser.getUsername());
+		user.setId(customUser.getUserId());
+		String subjectInfo = JSONUtil.toJsonStr(user);
 
 		return Jwts.builder()
 				.setHeaderParam("typ", "JWT")
-				.setSubject(username)
+				.setSubject(subjectInfo)
 				.setIssuedAt(nowDate)
 				.setExpiration(expireDate)// 7天过期
 				.signWith(SignatureAlgorithm.HS512, secret)

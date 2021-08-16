@@ -8,10 +8,10 @@ spring:
     url: jdbc:mysql://www.whyat.top:3307/vueadmin?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai
     password: 81654660
   # security
-  security:
-    user:
-      name: whyat
-      password: 123
+#  security:
+#    user:
+#      name: whyat
+#      password: 123
   #redis
   redis:
     host: www.whyat.top

@@ -1,20 +1,20 @@
 package com.whyat.config;
 
-import com.whyat.security.CaptchaFilter;
-import com.whyat.security.JwtAccessDeniedHandler;
-import com.whyat.security.JwtAuthenticationEntryPoint;
-import com.whyat.security.JwtAuthenticationFilter;
+import com.whyat.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Service;
 
 @Configuration
 //加载security相关配置
@@ -38,6 +38,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CaptchaFilter captchaFilter;
 
+    //用于给Security提供封装用户信息和权限的service
+    //这个Service专门封装的类是UserDetails的实现类
+    @Autowired
+    UserDetailService userDetailService;
+
     @Bean
     JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
         return new JwtAuthenticationFilter(authenticationManager());
@@ -50,6 +55,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/logout",
             "/favicon.ico"
     };
+
+    /**
+     * 配置给security加密形式
+     * @return
+     */
+    @Bean
+    BCryptPasswordEncoder bCryptPasswordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
+
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -84,5 +100,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //在用户名密码验证过滤器之前验证验证码
                 .addFilterBefore(captchaFilter, UsernamePasswordAuthenticationFilter.class)
         ;
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailService);
     }
 }

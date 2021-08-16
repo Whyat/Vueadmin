@@ -40,6 +40,8 @@ public class AuthController {
         String key = UUID.randomUUID().toString();
         String code = producer.createText();
 
+        // key = "111";
+        // code = "111";
 
         //2.生成验证码图片并写入到流中
         BufferedImage image = producer.createImage(code);
