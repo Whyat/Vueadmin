@@ -112,22 +112,22 @@
 
       <el-form :model="editForm" :rules="editFormRules" ref="editForm" label-width="100px" class="demo-ruleForm">
 
-        <el-form-item label="角色名称" prop="username" label-width="100px">
-          <el-input v-model="editForm.username" autocomplete="off"></el-input>
+        <el-form-item label="角色名称" prop="name" label-width="100px">
+          <el-input v-model="editForm.name" autocomplete="off"></el-input>
         </el-form-item>
 
         <el-form-item label="唯一编码" prop="code" label-width="100px">
           <el-input v-model="editForm.code" autocomplete="off"></el-input>
         </el-form-item>
 
-        <el-form-item label="描述" prop="description" label-width="100px">
-          <el-input v-model="editForm.description" autocomplete="off"></el-input>
+        <el-form-item label="描述" prop="remark" label-width="100px">
+          <el-input v-model="editForm.remark" autocomplete="off"></el-input>
         </el-form-item>
 
         <el-form-item label="状态" prop="status" label-width="100px">
           <el-radio-group v-model="editForm.status">
-            <el-radio :label=0>禁用</el-radio>
-            <el-radio :label=1>正常</el-radio>
+            <el-radio :label=0 :value=0> 禁用</el-radio>
+            <el-radio :label=1 :value=1> 正常</el-radio>
           </el-radio-group>
         </el-form-item>
 
@@ -153,6 +153,7 @@
             :data="permForm.treeData"
             show-checkbox
             :default-expand-all="true"
+            :check-strictly="true"
             node-key="id"
             :props="permForm.defaultProps">
         </el-tree>
@@ -168,6 +169,8 @@
 </template>
 
 <script>
+import request from "@/util/request";
+
 export default {
   name: "SysRole",
   data() {
@@ -216,8 +219,8 @@ export default {
     //1.取到表格的值
     this.getRoleList();
     //2.取得权限的数据
-    this.$axios.get('/sys/menu/list').then(res => {
-      console.log(res);
+    request.get('/sys/menu/list').then(res => {
+      console.log(res.data.data);
       this.permForm.treeData = res.data.data;
     });
   },
@@ -227,7 +230,7 @@ export default {
      **/
     //获取表格数据
     getRoleList() {
-      this.$axios.get('/sys/role/list', {
+      request.get('/sys/role/list', {
         //如果表格和分页有值传过去
         params: {
           name: this.searchForm.name,
@@ -239,19 +242,21 @@ export default {
       }).then(
           res => {
             this.tableData = res.data.data.records;
-            this.pagination = res.data.data.pagination;
+            this.pagination = res.data.data;
           }
       )
     },
     //给角色行分配权限
     editRowPermHandle(rowId) {
-      //1.展示权限对话框
       this.permDialogVisible = true;
-      //2.获取该角色的权限
-      this.$axios.get('/sys/role/info/' + rowId).then(res => {
-        console.log(res);
+
+      //1.获取该角色的权限
+      request.get('/sys/role/info/' + rowId).then(res => {
+        this.$refs.permTree.setCheckedKeys([])
+        //2.展示权限对话框
+        console.log(res.data.data.menuIds);
         //2.1将其有的权限渲染到权限是树上
-        this.$refs['permTree'].setCheckedKeys(res.data.data.menuIds);
+        this.$refs.permTree.setCheckedKeys(res.data.data.menuIds);
         //2.2 把当前角色的权限数据赋值给权限表单保存
         this.permForm.personalData = res.data.data;
       });
@@ -264,7 +269,7 @@ export default {
       // this.permForm.personalData.menuIds = this.$refs.permTree.getCheckedKeys();
       let checkedMenuIds = this.$refs.permTree.getCheckedKeys();
       //向后台发起权限更新请求
-      this.$axios.post('/sys/role/perm/' + this.permForm.personalData.id, checkedMenuIds).then(
+      request.post('/sys/role/perm/' + this.permForm.personalData.id, checkedMenuIds).then(
           res => {
             //这里没有根据业务code判断
             this.$message.success('赋权成功!');
@@ -278,7 +283,7 @@ export default {
     //编辑表格的某一行
     editRow(rowId) {
       //需要调用api获取最新数据
-      this.$axios.get('/sys/role/info/' + rowId).then(res => {
+      request.get('/sys/role/info/' + rowId).then(res => {
         //拿去数据填充到编辑表单中
         console.log(res);
         this.editForm = res.data.data;
@@ -301,7 +306,7 @@ export default {
       // console.log(ids);
 
       //发起请求
-      this.$axios.post('/sys/role/delete', ids).then(res => {
+      request.post('/sys/role/delete', ids).then(res => {
         //获取成功之后显示编辑表单对话框
         this.$message({
           message: '删除成功！',
@@ -346,7 +351,6 @@ export default {
     /**对话框**/
     //对话框关闭回调
     dialogClosed() {
-      console.log('dialogClosed!!!');
       this.editForm = {}
     },
     /**角色表单**/
@@ -354,7 +358,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           //根据表单元素中是否含有id判断当前表单是更新还是添加
-          this.$axios.post('/sys/role/' + (this.editForm.id ? 'update' : 'save')).then(
+          request.post('/sys/role/' + (this.editForm.id ? 'update' : 'save'),this.editForm).then(
               res => {
                 this.$message({
                   message: '恭喜你，提交成功！',

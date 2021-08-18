@@ -53,9 +53,16 @@ const router = new VueRouter({
     routes
 })
 
+//
 router.beforeEach(async (to, from, next) => {
-    const hasRoutes = store.state.hasRoutes;
-    if (!hasRoutes) {
+        const hasRoutes = store.state.hasRoutes;
+    const token = localStorage.getItem('token');
+    if(to.path == '/login')
+        next();
+    //没有token返回登陆页面
+    else if(!token)
+        next({path:'/login'});
+    else if (!hasRoutes) {
         if (await addRoutes(next)) {
         } else {
             next();

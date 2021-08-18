@@ -68,7 +68,7 @@ export default {
         if (valid) {
 
           const _this = this
-          this.$axios.post('/sys/user/updatePass', this.passForm).then(res => {
+          request.post('/sys/user/updatePass', this.passForm).then(res => {
 
             _this.$alert(res.data.msg, '提示', {
               confirmButtonText: '确定',

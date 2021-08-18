@@ -4,7 +4,8 @@ import store from './store'
 import router from './router'
 
 import axios from "axios";
-import './mock/index';
+//mock自定义后台数据
+// import './mock/index';
 import element from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 

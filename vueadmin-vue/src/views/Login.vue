@@ -22,7 +22,7 @@
           <el-image :src="captchaImg" @click="getCaptcha" class="captchaImg"/>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('loginForm')" :disabled="loginButtonDisabled">登录</el-button>
+          <el-button type="primary" @click="submitForm('loginForm')" @keyup.enter="submitForm('loginForm')" :disabled="loginButtonDisabled">登录</el-button>
           <el-button @click="resetForm('loginForm')">重置</el-button>
         </el-form-item>
       </el-form>
@@ -91,11 +91,11 @@ export default {
     },
     //发起请求获取验证码图片(Base64字符串)和验证码的唯一标识uuid
     getCaptcha() {
+      this.loginForm.captchaCode = '';
       request.get('/captcha').then((res) => {
         let data = res.data.data;
         this.captchaImg = data.captchaImg;
         this.loginForm.key = data.key;
-        this.loginForm.captchaCode = '';
         //防止用户在验证码刷出来之前登录
         this.loginButtonDisabled = false;
       });

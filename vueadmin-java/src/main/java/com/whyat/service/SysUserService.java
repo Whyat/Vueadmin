@@ -1,7 +1,10 @@
 package com.whyat.service;
 
+import com.whyat.common.dto.SubMenuDto;
 import com.whyat.entity.SysUser;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -16,4 +19,8 @@ public interface SysUserService extends IService<SysUser> {
     SysUser getByUserName(String username);
 
     String getUserAuthInfo(Long userId);
+
+    List<SubMenuDto> getCurrentUserSubMenuList(Long userId);
+
+    void clearRedisUserAuthInfoBySysRoleId(Long id);
 }

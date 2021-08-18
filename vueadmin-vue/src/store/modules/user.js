@@ -45,7 +45,7 @@ const actions = {
     //存入state
     getSubMenuList(context) {
         return new Promise((resolve, reject) => {
-            axios.post('/user/menu', {
+            axios.get('/sys/user/menu', {
                 headers: {
                     Authorization: localStorage.getItem("token")
                 }
@@ -53,8 +53,8 @@ const actions = {
                     //把路由列表放到store中
                     context.commit('SET_SUBMENULIST', res.data.data.subMenuList);
                     context.commit('SET_PERMLIST', res.data.data.permList);
-                    resolve(res.data);
                     context.commit('SET_HASROUTES', true);
+                resolve(res.data);
                 }
             ).catch(err => {
                 reject(err);

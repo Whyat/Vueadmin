@@ -34,7 +34,9 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        //请求头中获取jwt，header中的jwt参数是Authentication
         String jwt = request.getHeader(jwtUtils.getTokenName());
+        //没有jwt交给后面过滤器处理
         if (StrUtil.isBlankOrUndefined(jwt)) {
             chain.doFilter(request, response);
             return;
@@ -48,15 +50,19 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         if (jwtUtils.isTokenExpired(claim)) {
             throw new JwtException("token过期,重新登录");
         }
+        //jwt验证成功取出主体，主体中存放的是用户名和用户id的json字符串
         String userInfo = claim.getSubject();
         SysUser sysUser = JSON.parseObject(userInfo, SysUser.class);
+        //根据用户id获取用户拥有的权限
         List<GrantedAuthority> authInfo = userDetailService.getUserAuthorities(sysUser.getId());
 
-        //就是一个Authentication对象
+        //把用户的id和权限放置在Authentication中，UsernamePasswordAuthenticationToken是1个Authentication实现类
+        //用户id是放在principal主体中的
         UsernamePasswordAuthenticationToken token
-                = new UsernamePasswordAuthenticationToken(sysUser, null, authInfo);
+                = new UsernamePasswordAuthenticationToken(sysUser.getId(), null, authInfo);
         //不加这句代码，会进入到AuthenticationEntryPoint，代表了jwt认证失败
         SecurityContextHolder.getContext().setAuthentication(token);
+        //进入下一个过滤器
         chain.doFilter(request, response);
     }
 }

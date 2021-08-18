@@ -199,6 +199,8 @@
 </template>
 
 <script>
+import request from "@/util/request";
+
 export default {
   name: "SysUser",
   data() {
@@ -247,7 +249,7 @@ export default {
     //1.取到表格的值
     this.getUserList();
     //2.取得角色的数据
-    this.$axios.get('/sys/role/list').then(res => {
+    request.get('/sys/role/list').then(res => {
       this.roleForm.treeData = res.data.data.records;
     });
   },
@@ -264,7 +266,7 @@ export default {
     },
     //获取表格数据
     getUserList() {
-      this.$axios.get('/sys/user/list', {
+      request.get('/sys/user/list', {
         //如果表格和分页有值传过去
         params: {
           username: this.searchForm.username,
@@ -287,7 +289,7 @@ export default {
       //必须放在axios外层,可能是初始化需要时间
       this.roleDialogVisible = true;
       //2.获取该用户的角色
-      this.$axios.get('/sys/user/info/' + userId).then(res => {
+      request.get('/sys/user/info/' + userId).then(res => {
         console.log(res);
         //2.1将其有的角色渲染到角色树上
         this.$refs.roleTree.setCheckedKeys(res.data.data.roles)
@@ -303,7 +305,7 @@ export default {
       // this.permForm.personalData.roleIds = this.$refs.roleTree.getCheckedKeys();
       let checkedRoleIds = this.$refs.roleTree.getCheckedKeys();
       //向后台发起角色更新请求
-      this.$axios.post('/sys/user/role/' + this.roleForm.personalData.id, checkedRoleIds).then(
+      request.post('/sys/user/role/' + this.roleForm.personalData.id, checkedRoleIds).then(
           res => {
             //这里没有根据业务code判断
             this.$message.success('分配角色成功!');
@@ -322,7 +324,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$axios.post("/sys/user/resetpass", userId).then(res => {
+        request.post("/sys/user/resetpass", userId).then(res => {
           this.$message({
             showClose: true,
             message: '重置密码成功',
@@ -336,7 +338,7 @@ export default {
     //编辑表格的某一行
     editUser(rowId) {
       //需要调用api获取最新数据
-      this.$axios.get('/sys/role/info/' + rowId).then(res => {
+      request.get('/sys/role/info/' + rowId).then(res => {
         //拿去数据填充到编辑表单中
         console.log(res);
         this.editForm = res.data.data;
@@ -359,7 +361,7 @@ export default {
       // console.log(ids);
 
       //发起请求
-      this.$axios.post('/sys/role/delete', ids).then(res => {
+      request.post('/sys/role/delete', ids).then(res => {
         //获取成功之后显示编辑表单对话框
         this.$message({
           message: '删除成功！',
@@ -411,7 +413,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           //根据表单元素中是否含有id判断当前表单是更新还是添加
-          this.$axios.post('/sys/user/' + (this.editForm.id ? 'update' : 'save')).then(
+          request.post('/sys/user/' + (this.editForm.id ? 'update' : 'save')).then(
               res => {
                 this.$message({
                   message: '提交成功！',

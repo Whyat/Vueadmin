@@ -1,9 +1,11 @@
 package com.whyat.controller;
 
 import cn.hutool.core.map.MapUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.code.kaptcha.Producer;
 import com.whyat.common.lang.Const;
 import com.whyat.common.lang.Result;
+import com.whyat.entity.SysUser;
 import com.whyat.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +17,13 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
 @RestController
-public class AuthController {
+public class AuthController extends BaseController{
     //验证码生产者顶级接口
     //注入配置好的DefaultKaptcha
     @Autowired
@@ -40,8 +43,8 @@ public class AuthController {
         String key = UUID.randomUUID().toString();
         String code = producer.createText();
 
-        // key = "111";
-        // code = "111";
+        key = "11111";
+        code = "11111";
 
         //2.生成验证码图片并写入到流中
         BufferedImage image = producer.createImage(code);
@@ -67,6 +70,24 @@ public class AuthController {
                 .build();
 
         return Result.success(map);
+    }
+
+    /**
+     * 获取登录用户的信息
+     * @param principal
+     * @return
+     */
+    @GetMapping("/sys/userInfo")
+    public Result info(Principal principal){
+        String id = principal.getName();
+        Long userId = Long.valueOf(id);
+        //获取用户信息
+        SysUser sysUser = sysUserService.getOne(new QueryWrapper<SysUser>().eq("id", userId));
+        //只返回需要的数据，用map构建
+        return Result.success(MapUtil.builder()
+                                    .put("id", sysUser.getId())
+                                    .put("avatarUrl", sysUser.getAvatar())
+                                    .put("username", sysUser.getUsername()).build());
     }
 }
 

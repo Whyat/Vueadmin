@@ -53,7 +53,7 @@ export default {
     getUserInfo() {
       this.$store.dispatch('getUserInfo').then(
           res => {
-            this.userInfo = res.data.data.userInfo;
+            this.userInfo = res.data.data;
           }
       )
     },

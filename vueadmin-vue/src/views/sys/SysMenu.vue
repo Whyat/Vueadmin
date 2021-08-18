@@ -9,6 +9,10 @@
     </el-form>
 
     <el-table
+        v-loading="loading"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.8)"
         :data="tableData"
         style="width: 100%;margin-bottom: 20px;"
         row-key="id"
@@ -75,14 +79,14 @@
           label="操作">
 
         <template v-slot="scopedProps">
-          <el-button type="text" @click="editRow(scopedProps.row.id)">编辑</el-button>
-          <el-divider direction="vertical"></el-divider>
+          <el-button type="text" @click="editRow(scopedProps.row.id)">查看</el-button>
+          <!--<el-divider direction="vertical"></el-divider>-->
 
-          <template>
-            <el-popconfirm title="这是一段内容确定删除吗？" @confirm="deleteRow(scopedProps.row.id)">
-              <el-button type="text" slot="reference">删除</el-button>
-            </el-popconfirm>
-          </template>
+          <!--<template>-->
+          <!--  <el-popconfirm title="这是一段内容确定删除吗？" @confirm="deleteRow(scopedProps.row.id)">-->
+          <!--    <el-button type="text" slot="reference">删除</el-button>-->
+          <!--  </el-popconfirm>-->
+          <!--</template>-->
 
         </template>
       </el-table-column>
@@ -90,13 +94,13 @@
 
     <!--新增按钮的弹窗-->
     <el-dialog
-        title="提示"
+        title="查看权限"
         :visible.sync="centerDialogVisible"
         width="50%"
         @close="dialogClosed">
 
 
-      <el-form :model="editForm" :rules="editFormRules" ref="editForm" label-width="100px" class="demo-ruleForm">
+      <el-form :model="editForm"  ref="editForm" label-width="100px" class="demo-ruleForm">
 
 
         <el-form-item label="上级菜单" prop="parentId">
@@ -152,8 +156,8 @@
 
 
         <el-form-item>
-          <el-button type="primary" @click="submitForm('editForm')">提交</el-button>
-          <el-button @click="resetForm('editForm')">重置</el-button>
+          <el-button type="primary" v-show="!this.editForm.id"  @click="submitForm('editForm')">提交</el-button>
+          <el-button v-show="!this.editForm.id" @click="resetForm('editForm')">重置</el-button>
         </el-form-item>
       </el-form>
 
@@ -162,11 +166,14 @@
 </template>
 
 <script>
+import request from "@/util/request.js";
 
 export default {
   name: "SysMenu",
   data() {
     return {
+      //表格加载状态
+      loading:true,
       //对话框的开关
       centerDialogVisible: false,
       editForm: {},
@@ -205,14 +212,16 @@ export default {
   methods: {
     //获取表格数据
     getMenuList() {
-      this.$axios.get('/sys/menu/list').then(res => {
+      this.loading = true;
+      request.get('/sys/menu/list').then(res => {
+        this.loading = false;
         this.tableData = res.data.data;
       });
     },
     //编辑表格的某一行
     editRow(rowId) {
       //需要调用api获取最新数据
-      this.$axios.get('/sys/menu/info/' + rowId).then(res => {
+      request.get('/sys/menu/info/' + rowId).then(res => {
         //拿去数据填充到编辑表单中
         console.log(res);
         this.editForm = res.data.data;
@@ -221,7 +230,7 @@ export default {
       });
     },
     deleteRow(rowId) {
-      this.$axios.post('/sys/menu/delete/' + rowId).then(res => {
+      request.post('/sys/menu/delete/' + rowId).then(res => {
         console.log(res);
         //获取成功之后显示编辑表单对话框
         this.$message({
@@ -241,7 +250,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           //根据表单元素中是否含有id判断当前表单是更新还是添加
-          this.$axios.post('/sys/menu' + (this.editForm.id ? 'update' : 'save')).then(
+          request.post('/sys/menu/' + (this.editForm.id ? 'update' : 'save'),this.editForm).then(
               res => {
                 this.$message({
                   message: '恭喜你，提交成功！',

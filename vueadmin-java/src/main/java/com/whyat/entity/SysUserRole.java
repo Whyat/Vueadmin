@@ -2,6 +2,7 @@ package com.whyat.entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -12,7 +13,8 @@ import lombok.EqualsAndHashCode;
  * @since 2021-08-12
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode
+@Accessors(chain = true)
 public class SysUserRole extends BaseEntity {
 
     private static final long serialVersionUID = 1L;

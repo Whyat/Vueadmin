@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -20,7 +21,7 @@ public class BaseEntity implements Serializable {
 
     private LocalDateTime created;
     private LocalDateTime updated;
-
+    @NotNull
     private Integer status;
 
 }

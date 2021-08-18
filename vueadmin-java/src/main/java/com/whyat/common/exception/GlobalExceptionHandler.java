@@ -22,11 +22,6 @@ import java.nio.file.AccessDeniedException;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    // @ResponseStatus(HttpStatus.BAD_REQUEST)
-    // @ExceptionHandler(value = RuntimeException.class)
-    // public Result handler(RuntimeException e) {
-    //     return Result.fail(e.getMessage());
-    // }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(value = AccessDeniedException.class)

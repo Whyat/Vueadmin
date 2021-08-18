@@ -29,6 +29,7 @@ public class UserDetailService implements UserDetailsService {
         SysUser sysUser = sysUserService.getByUserName(username);
         //没有查询到，抛出异常，secuirty会处理
         if (sysUser == null) {
+            //security处理并没有抛出这个异常，抛了个AuthException，所以打印不出这个异常信息
             throw new UsernameNotFoundException("用户名或密码不正确");
         }
         return new CustomUser(sysUser.getId(), sysUser.getUsername(), sysUser.getPassword(), getUserAuthorities(sysUser.getId()));

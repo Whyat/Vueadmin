@@ -2,12 +2,16 @@ package com.whyat.common.dto;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ *
+ * 前端的子菜单格式类
+ *
  * ===返回的json格式===
  *
  * {
@@ -20,6 +24,7 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode
+@Accessors(chain = true)
 public class SubMenuDto implements Serializable {
 
     private static final long serialVersionUID = 1338465083821171616L;

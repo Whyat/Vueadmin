@@ -35,13 +35,14 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         ServletOutputStream outputStream = resp.getOutputStream();
         CustomUser customUser = (CustomUser) authentication.getPrincipal();
         //生成主体为用户名的'Authoriaztion'的headervalue=token参数，放到响应头header，
-        String token = jwtUtils.generateToken(customUser);
+        String jwt = jwtUtils.generateToken(customUser);
+        log.info("[jwt]:"+jwt);
         log.info("authentication参数是：" + authentication);
-        resp.setHeader(jwtUtils.getTokenName(), token);
+        resp.setHeader(jwtUtils.getTokenName(), jwt);
 
 
         //返回响应
-        Result result = Result.success(2000, "认证登录成功,header中携带了名称为authorization的token", token);
+        Result result = Result.success(2000, "认证登录成功,header中携带了名称为authorization的token", jwt);
         String jsonStr = JSONUtil.toJsonStr(result);
         byte[] bytes = jsonStr.getBytes(StandardCharsets.UTF_8);
 

@@ -2,6 +2,9 @@ package com.whyat.service;
 
 import com.whyat.entity.SysRole;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.whyat.entity.SysUser;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface SysRoleService extends IService<SysRole> {
 
+    List<SysRole> getRolesWithUser(SysUser sysUser);
 }
