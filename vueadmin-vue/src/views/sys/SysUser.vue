@@ -39,7 +39,7 @@
       </el-table-column>
 
       <el-table-column
-          prop="usernmae"
+          prop="username"
           label="用户名"
           width="120">
       </el-table-column>
@@ -57,7 +57,7 @@
           prop="rolename"
           label="角色名">
         <template v-slot="scopedProps">
-          <el-tag size="small" v-for="role in scopedProps.row.roles" type="info">{{ role.name }}</el-tag>
+          <el-tag size="small" v-for="role in scopedProps.row.sysRoles" type="info">{{ role.name }}</el-tag>
         </template>
       </el-table-column>
 
@@ -133,41 +133,38 @@
         @close="dialogClosed">
 
 
-      <el-form :model="editForm" :rules="editFormRules" ref="editForm" label-width="100px" class="demo-ruleForm">
+      <el-form :model="editForm" :rules="editFormRules" ref="editForm" label-width="30px" class="demo-ruleForm">
 
-        <el-form :model="editForm" :rules="editFormRules" ref="editForm">
-          <el-form-item label="用户名" prop="username" label-width="100px">
-            <el-input v-model="editForm.username" autocomplete="off"></el-input>
-            <el-alert
-                title="初始密码为888888"
-                :closable="false"
-                type="info"
-                style="line-height: 12px;"
-            ></el-alert>
-          </el-form-item>
+        <!--<el-form :model="editForm" :rules="editFormRules" ref="editForm">-->
+        <el-form-item label="用户名" prop="username" label-width="100px">
+          <el-input v-model="editForm.username" autocomplete="off"></el-input>
+          <el-alert
+              title="初始密码为888888"
+              :closable="false"
+              type="info"
+              style="line-height: 12px;"
+          ></el-alert>
+        </el-form-item>
 
-          <el-form-item label="邮箱" prop="email" label-width="100px">
-            <el-input v-model="editForm.email" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="手机号" prop="phone" label-width="100px">
-            <el-input v-model="editForm.phone" autocomplete="off"></el-input>
-          </el-form-item>
+        <el-form-item label="邮箱" prop="email" label-width="100px">
+          <el-input v-model="editForm.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号" prop="phone" label-width="100px">
+          <el-input v-model="editForm.phone" autocomplete="off"></el-input>
+        </el-form-item>
 
-          <el-form-item label="状态" prop="statu" label-width="100px">
-            <el-radio-group v-model="editForm.statu">
-              <el-radio :label="0">禁用</el-radio>
-              <el-radio :label="1">正常</el-radio>
-            </el-radio-group>
-          </el-form-item>
-
-        </el-form>
-
-
+        <el-form-item label="状态" prop="status" label-width="100px">
+          <el-radio-group v-model="editForm.status">
+            <el-radio :label="0">禁用</el-radio>
+            <el-radio :label="1">正常</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('editForm')">提交</el-button>
           <el-button @click="resetForm('editForm')">重置</el-button>
         </el-form-item>
       </el-form>
+
 
     </el-dialog>
 
@@ -237,9 +234,8 @@ export default {
           {required: true, message: '请输入用户名称', trigger: 'blur'}
         ],
         email: [
-          {required: true, message: '请输入邮箱', trigger: 'blur'}
-        ],
-        statu: [
+          {required: true, type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change']}],
+        status: [
           {required: true, message: '请选择状态', trigger: 'blur'}
         ]
       },
@@ -269,7 +265,7 @@ export default {
       request.get('/sys/user/list', {
         //如果表格和分页有值传过去
         params: {
-          username: this.searchForm.username,
+          username: this.searchForm.name,
           pagination: {
             current: this.pagination.current,
             size: this.pagination.size
@@ -279,7 +275,7 @@ export default {
           res => {
             console.log(res);
             this.tableData = res.data.data.records;
-            this.pagination = res.data.data.pagination;
+            this.pagination = res.data.data;
           }
       )
     },
@@ -292,9 +288,9 @@ export default {
       request.get('/sys/user/info/' + userId).then(res => {
         console.log(res);
         //2.1将其有的角色渲染到角色树上
-        this.$refs.roleTree.setCheckedKeys(res.data.data.roles)
+        this.$refs.roleTree.setCheckedKeys(res.data.data.sysRoles.map(role =>  role.id))
         //2.2 把当前角色的角色数据赋值给角色表单保存
-        this.roleForm.personalData = res.data.data.roles;
+        this.roleForm.personalData = res.data.data;
       });
     },
     //角色表单提交处理
@@ -304,6 +300,7 @@ export default {
       //如果我在控件上设置node-key="id",那么我调用getChecckedKeys()获取的就是id
       // this.permForm.personalData.roleIds = this.$refs.roleTree.getCheckedKeys();
       let checkedRoleIds = this.$refs.roleTree.getCheckedKeys();
+      console.log(checkedRoleIds);
       //向后台发起角色更新请求
       request.post('/sys/user/role/' + this.roleForm.personalData.id, checkedRoleIds).then(
           res => {
@@ -333,6 +330,8 @@ export default {
             }
           });
         })
+      }).catch(() => {
+        console.log('this.$confirm的catch方法')
       })
     },
     //编辑表格的某一行
@@ -361,7 +360,7 @@ export default {
       // console.log(ids);
 
       //发起请求
-      request.post('/sys/role/delete', ids).then(res => {
+      request.post('/sys/user/delete', ids).then(res => {
         //获取成功之后显示编辑表单对话框
         this.$message({
           message: '删除成功！',
@@ -410,10 +409,12 @@ export default {
     },
     /**角色表单**/
     submitForm(formName) {
+
       this.$refs[formName].validate((valid) => {
+        console.log(valid);
         if (valid) {
           //根据表单元素中是否含有id判断当前表单是更新还是添加
-          request.post('/sys/user/' + (this.editForm.id ? 'update' : 'save')).then(
+          request.post('/sys/user/' + (this.editForm.id ? 'update' : 'save'), this.editForm).then(
               res => {
                 this.$message({
                   message: '提交成功！',
@@ -457,11 +458,12 @@ export default {
   float: right;
   margin-top: 22px;
 }
+
 /*
 标签之间的间隙
 */
-.el-tag+.el-tag{
-  margin-left:5px;
+.el-tag + .el-tag {
+  margin-left: 5px;
 }
 
 /*.el-table__header tr,*/

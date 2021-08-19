@@ -2,9 +2,9 @@
   <el-row type="flex" class="row-bg" justify="center">
     <el-col :xl="6" :lg="7">
       <h2>欢迎来到VueAdmin管理系统</h2>
-      <el-image style="height: 180px;width: 180px" :src="require('@/assets/MarkerHub.jpg')"/>
-      <p>公众号 MarkerHub</p>
-      <p>扫码二维码，回复【 VueAdmin 】获取登录密码</p>
+      <el-image style="height: 180px;width: 180px" src="https://1-picbed-1258653918.cos.ap-chengdu.myqcloud.com/personal/wechat_qrcode.png"/>
+      <p>个人微信 Whyat</p>
+      <p></p>
     </el-col>
     <el-col :span="1">
       <el-divider direction="vertical"></el-divider>

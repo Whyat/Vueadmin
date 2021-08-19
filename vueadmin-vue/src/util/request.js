@@ -3,6 +3,7 @@ import router from "../router";
 import el from 'element-ui';
 
 axios.defaults.baseURL = 'http://localhost:8081'
+// axios.defaults.baseURL = 'http://1.15.157.200:8081'
 // create an axios instance
 const request = axios.create({
     // baseURL: baseUrl, // url = base url + request url
@@ -33,7 +34,7 @@ request.interceptors.response.use(
         } else {
             console.log('e:');
             console.log( resp);
-            el.Message.error(resp.msg ? resp.msg : '系统异常');
+            el.Message.error(resp.data ? resp.data : '系统异常');
             return response;
         }
     },

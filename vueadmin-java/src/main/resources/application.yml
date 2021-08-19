@@ -5,7 +5,7 @@ spring:
   datasource:
     username: root
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://www.whyat.top:3307/vueadmin?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://1.15.157.200:3307/vueadmin?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai
     password: 81654660
     hikari:
       # 连接池最大连接数，默认是 10
@@ -29,7 +29,7 @@ spring:
   #      password: 123
   #redis
   redis:
-    host: www.whyat.top
+    host: 1.15.157.200
     port: 6380
   #热部署
   devtools:

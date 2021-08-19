@@ -13,8 +13,10 @@ import com.whyat.service.SysUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.whyat.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,6 +42,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Autowired
     RedisUtil redisUtil;
+
+    //security默认的密码加密器
+    @Autowired
+    BCryptPasswordEncoder passsEncoder;
 
     @Override
     public SysUser getByUserName(String username) {
@@ -120,6 +126,24 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         sysUsers.forEach(
                 user -> redisUtil.hdel(Const.GRANTED_AUTHORITY, user.getUsername())
         );
+    }
+
+    /**
+     * 清除缓存
+     * @param username
+     */
+    @Override
+    public void clearSysUserAuthInfo(String username) {
+        redisUtil.hdel(Const.GRANTED_AUTHORITY, username);
+    }
+
+    @Override
+    public SysUser resetPass(Long userId) {
+        SysUser sysUser = this.getById(userId);
+        sysUser.setPassword(passsEncoder.encode(Const.DEFAULT_SYSUSER_PASSWORD));
+        sysUser.setUpdated(LocalDateTime.now());
+        this.updateById(sysUser);
+        return sysUser;
     }
 
     /**

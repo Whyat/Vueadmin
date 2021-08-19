@@ -21,6 +21,7 @@ public class BaseEntity implements Serializable {
 
     private LocalDateTime created;
     private LocalDateTime updated;
+
     @NotNull
     private Integer status;
 

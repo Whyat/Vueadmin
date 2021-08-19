@@ -9,6 +9,7 @@ import com.whyat.entity.SysUser;
 import com.whyat.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sun.misc.BASE64Encoder;
@@ -30,7 +31,8 @@ public class AuthController extends BaseController{
     Producer producer;
     @Autowired
     RedisUtil redisUtil;
-
+    @Autowired
+    BCryptPasswordEncoder passsEncoder;
     /**
      * 谷歌Kaptcha验证码
      *
@@ -43,9 +45,10 @@ public class AuthController extends BaseController{
         String key = UUID.randomUUID().toString();
         String code = producer.createText();
 
-        key = "11111";
-        code = "11111";
-
+        // key = "11111";
+        // code = "11111";
+        String encodedPass = passsEncoder.encode("123");
+        log.info(encodedPass);
         //2.生成验证码图片并写入到流中
         BufferedImage image = producer.createImage(code);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

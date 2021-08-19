@@ -23,4 +23,8 @@ public interface SysUserService extends IService<SysUser> {
     List<SubMenuDto> getCurrentUserSubMenuList(Long userId);
 
     void clearRedisUserAuthInfoBySysRoleId(Long id);
+
+    void clearSysUserAuthInfo(String username);
+
+    SysUser resetPass(Long userId);
 }
