@@ -2,8 +2,8 @@ import axios from 'axios'
 import router from "../router";
 import el from 'element-ui';
 
-axios.defaults.baseURL = 'http://localhost:8081'
-// axios.defaults.baseURL = 'http://1.15.157.200:8081'
+// axios.defaults.baseURL = 'http://localhost:8081'
+axios.defaults.baseURL = 'http://1.15.157.200:8081'
 // create an axios instance
 const request = axios.create({
     // baseURL: baseUrl, // url = base url + request url

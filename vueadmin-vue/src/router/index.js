@@ -53,11 +53,11 @@ const routes = [
         name: 'Login',
         component: () => import("@/views/Login")
     },
-    {
-        path: '/*',
-        name: '404',
-        component: () => import("@/views/error/404")
-    }
+    // {
+    //     path: '/*',
+    //     name: '404',
+    //     component: () => import("@/views/error/404")
+    // }
 ]
 
 const router = new VueRouter({
