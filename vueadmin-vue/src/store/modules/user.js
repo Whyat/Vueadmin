@@ -64,7 +64,7 @@ const actions = {
     //退出清空state
     logout({commit}) {
         //1.axios异步登出请求
-        request.post('/user/logout').then(
+        request.post('/logout').then(
             res => {
                 sessionStorage.clear();
                 localStorage.clear();
@@ -78,8 +78,7 @@ const actions = {
 
             }
         )
-        //2.清空状态
-        commit('RESET_USER_STATE');
+
     }
 }
 

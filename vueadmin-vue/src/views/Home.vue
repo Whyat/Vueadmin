@@ -12,7 +12,7 @@
             </span>
             <el-dropdown-menu slot="dropdown">
 
-              <router-link to="/usercenter">
+              <router-link to="/userCenter">
                 <el-dropdown-item>个人中心</el-dropdown-item>
               </router-link>
               <el-dropdown-item command="logout">退出</el-dropdown-item>

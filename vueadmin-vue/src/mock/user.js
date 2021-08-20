@@ -187,7 +187,7 @@ mock.mock(RegExp('/sys/user/list*'), 'get', () => {
 
 
 //拦截登出
-mock.mock('/user/logout', 'post', () => {
+mock.mock('/logout', 'post', () => {
     return {
         ...baseResult,
         data: null
