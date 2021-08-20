@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@MapperScan("com.markerhub.mapper")
+@MapperScan("com.whyat.mapper")
 public class MybatisPlusConfig {
 
 	@Bean

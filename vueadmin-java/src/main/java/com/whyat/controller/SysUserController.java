@@ -5,6 +5,7 @@ import cn.hutool.core.map.MapUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.whyat.common.dto.PassDto;
 import com.whyat.common.dto.SubMenuDto;
 import com.whyat.common.lang.Const;
 import com.whyat.common.lang.Result;
@@ -198,5 +199,23 @@ public class SysUserController extends BaseController {
         SysUser sysUser = sysUserService.resetPass(userId);
         return Result.success(sysUser);
     }
+
+    @PostMapping("/updatePass")
+    public Result updatePass(@Validated @RequestBody PassDto passDto, Principal principal) {
+
+        SysUser sysUser = sysUserService.getById(principal.getName());
+
+        boolean matches = passsEncoder.matches(passDto.getCurrentPass(), sysUser.getPassword());
+        if (!matches) {
+            return Result.fail("旧密码不正确");
+        }
+
+        sysUser.setPassword(passsEncoder.encode(passDto.getPassword()));
+        sysUser.setUpdated(LocalDateTime.now());
+
+        sysUserService.updateById(sysUser);
+        return Result.success("密码修改成功");
+    }
+
 
 }

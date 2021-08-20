@@ -14,7 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.stereotype.Service;
 
 @Configuration
 //加载security相关配置
@@ -33,6 +32,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     @Autowired
     JwtAccessDeniedHandler jwtAccessDeniedHandler;
+
+    @Autowired
+    JwtLogoutSuccessHandler jwtLogoutSuccessHandler;
 
     //自定义验证码过滤器
     @Autowired
@@ -74,6 +76,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .successHandler(authenticationSuccessHandler)
                 .failureHandler(authenticationFailureHandler)
+
+                .and()
+                .logout()
+                .logoutSuccessHandler(jwtLogoutSuccessHandler)
 
                 //禁用session
                 .and()
